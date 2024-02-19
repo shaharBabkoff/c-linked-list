@@ -4,29 +4,35 @@
 #define Max 50
 
 typedef struct _node{
-    char data[Max];
-    int count;
+    char *data;
     struct _node* _next;
 } Node;
    
-struct  _StrList {
+typedef struct  _StrList {
     Node* _head;
     size_t _size;
-};
-Node* Node_alloc(char data[],Node* next) {
+}StrList;
+
+Node* Node_alloc(char *data,Node* next) {
 	Node* p= (Node*)malloc(sizeof(Node));
-	*p->data= data;
+    if(p==NULL){
+        return NULL;
+    }
+	p->data= data;
 	p->_next= next;
 	return p;
 }
-
 
 StrList* StrList_alloc(){ 
     StrList* list = (StrList*)malloc(sizeof(StrList));  
         list->_head = NULL; 
         list->_size = 0; 
     return list; 
-} 
+}
+
+void Node_free(Node* node){
+    free(node);
+}
  
 void StrList_free(StrList* StrList){
 if (StrList==NULL) return;
@@ -39,9 +45,27 @@ if (StrList==NULL) return;
 	}
 	free(StrList);
 } 
+void listFromUser(StrList* ans){
+    int number;
+    scanf("%d",&number);
+    char inputLine[1024]; // Buffer to hold the entire line of input
+ if (fgets(inputLine, sizeof(inputLine), stdin) != NULL) {
+    char* word = strtok(inputLine, " \n"); // Use strtok to split the input line by spaces and newline character
+    int wordcount=0;
+    while (word != NULL&& wordcount<number) {
+        StrList_insertLast(ans, word); // Insert each word into the list
+        word = strtok(NULL, " \n"); // Get the next word
+        wordcount++;
+    }
+}
+    
+}
 
 size_t StrList_size(const StrList* StrList){
-    return StrList->_size;
+    if(StrList==NULL){
+        return 0;
+    }
+    else return StrList->_size;
 }
 
 void StrList_insertLast(StrList* sourceList, const char* data){
@@ -72,7 +96,7 @@ void StrList_print(const StrList* StrList){
     if (!StrList){
        return;
     }
-    Node* p1=StrList->_head;
+    const Node* p1=StrList->_head;
     while (p1){
        printf("%s\n", p1->data);
        p1=p1->_next;
@@ -82,7 +106,7 @@ void StrList_printAt(const StrList* Strlist,int index){
      if (!Strlist){
        return;
     }
-    Node* p1=Strlist->_head;
+    const Node* p1=Strlist->_head;
     while (index>0)
     {
         p1=p1->_next;
@@ -93,7 +117,7 @@ void StrList_printAt(const StrList* Strlist,int index){
 
 int StrList_printLen(const StrList* Strlist){
     int ans=0;
-    Node* p1=Strlist->_head;
+    const Node* p1=Strlist->_head;
     while (p1){
     ans=ans+strlen(p1->data); 
     p1=p1->_next;
@@ -105,21 +129,22 @@ int StrList_count(StrList* StrList, const char* data){
 int ans=0;
 const Node* p1=StrList->_head;
 while (p1){
-    if (strcmp(data,p1->data)){
+    if (strcmp(data,p1->data)==0){
        ans++;
     }
+    p1=p1->_next;
 }
  return ans;
 }
 
-void StrList_remove(StrList* list, const char* value) {
- if (!list || !list->_head || !value) {
+void StrList_remove(StrList* list, const char* data) {
+ if (!list || !list->_head || !data) {
         return;
     }
     Node* current = list->_head;
     Node* prev = NULL;
     while (current != NULL) {
-        if (strcmp(current->data, value) == 0) {
+        if (strcmp(current->data, data) == 0) {
             if (prev == NULL) {
                 list->_head = current->_next;
             } else {
