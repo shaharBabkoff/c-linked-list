@@ -12,21 +12,28 @@ typedef struct  _StrList {
     Node* _head;
     size_t _size;
 }StrList;
-
-Node* Node_alloc(char *data,Node* next) {
-	Node* p= (Node*)malloc(sizeof(Node));
-    if(p==NULL){
+Node* Node_alloc(const char* data, Node* next) {
+    Node* p = (Node*)malloc(sizeof(Node));
+    if (p == NULL) {
         return NULL;
     }
-	p->data= data;
-	p->_next= next;
-	return p;
+    if (data != NULL) {
+        p->data = strdup(data); // Duplicate the string
+        if (p->data == NULL) {
+            free(p); // Clean up if strdup fails
+            return NULL;
+        }
+    } else {
+        p->data = NULL; // Handle NULL data gracefully
+    }
+    p->_next = next;
+    return p;
 }
 
 StrList* StrList_alloc(){ 
-    StrList* list = (StrList*)malloc(sizeof(StrList));  
-        list->_head = NULL; 
-        list->_size = 0; 
+     StrList* list = (StrList*)malloc(sizeof(StrList));  
+     list->_head = NULL; 
+     list->_size = 0; 
     return list; 
 }
 
@@ -69,7 +76,7 @@ size_t StrList_size(const StrList* StrList){
 }
 
 void StrList_insertLast(StrList* sourceList, const char* data){
-Node* new= Node_alloc(data,NULL);
+ Node* new= Node_alloc(data,NULL);
 Node* p1= sourceList->_head;
 while (p1->_next != NULL)
 {
@@ -226,23 +233,18 @@ StrList* StrList_clone(const StrList* sourceList) {
 	return ans;
 }
 
-void StrList_reverse( StrList* sourceList){
-    if (sourceList == NULL)
-    {
+void StrList_reverse(StrList* sourceList) {
+    if (sourceList == NULL || sourceList->_head == NULL) {
         return;
     }
-    const Node* temp= sourceList->_head;
-    const Node* new_head = NULL;
-    // create new nodes and insert them beginning
-    while (temp != NULL)
-    {
-        struct node* new_node = Node_alloc(temp->data,new_head);
+    Node* temp = sourceList->_head;
+    Node* new_head = NULL;
+    while (temp != NULL) {
+        Node* new_node = Node_alloc(temp->data, new_head);
         new_head = new_node;
         temp = temp->_next;
-
     }
-    // update the head with the new head
-    sourceList = new_head;
+    sourceList->_head = new_head; // Update the head of the source list
 }
     
 void StrList_sort(StrList* list) {
@@ -274,7 +276,3 @@ int StrList_isSorted(StrList* sorceStrList){
     
 	
     
-
-
-
-
