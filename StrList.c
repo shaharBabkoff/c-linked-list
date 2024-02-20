@@ -12,28 +12,21 @@ typedef struct  _StrList {
     Node* _head;
     size_t _size;
 }StrList;
-Node* Node_alloc(const char* data, Node* next) {
-    Node* p = (Node*)malloc(sizeof(Node));
-    if (p == NULL) {
+
+Node* Node_alloc(const char *data,Node* next) {
+    Node* p= (Node*)malloc(sizeof(Node));
+    if(p==NULL){
         return NULL;
     }
-    if (data != NULL) {
-        p->data = strdup(data); // Duplicate the string
-        if (p->data == NULL) {
-            free(p); // Clean up if strdup fails
-            return NULL;
-        }
-    } else {
-        p->data = NULL; // Handle NULL data gracefully
-    }
-    p->_next = next;
-    return p;
+	p->data= strdup(data);
+	p->_next= next;
+	return p;
 }
 
 StrList* StrList_alloc(){ 
-     StrList* list = (StrList*)malloc(sizeof(StrList));  
-     list->_head = NULL; 
-     list->_size = 0; 
+    StrList* list = (StrList*)malloc(sizeof(StrList));  
+        list->_head = NULL; 
+        list->_size = 0; 
     return list; 
 }
 
@@ -52,22 +45,76 @@ if (StrList==NULL) return;
 	}
 	free(StrList);
 } 
-void listFromUser(StrList* ans){
-    int number;
-    scanf("%d",&number);
-    char inputLine[1024]; // Buffer to hold the entire line of input
- if (fgets(inputLine, sizeof(inputLine), stdin) != NULL) {
-    char* word = strtok(inputLine, " \n"); // Use strtok to split the input line by spaces and newline character
-    int wordcount=0;
-    while (word != NULL&& wordcount<number) {
-        StrList_insertLast(ans, word); // Insert each word into the list
-        word = strtok(NULL, " \n"); // Get the next word
-        wordcount++;
-    }
-}
+// void listFromUser(StrList* ans, int number){
+//     int size=10;
+//     char c;
+//     int len=0;
+//     char *data;
+//     while (c!= '\n')
+//     {
+//         while (c!="")
+//         {
+//         c= getchar();
+//         data=+c;
+//         len++;
+//         }
+//         if (len==size){
+//             size*=2;
+//         realloc(ans,size);
+//         }
+//         Node* new= Node_alloc(data,NULL);
+//         StrList_insertLast(ans,data);
     
-}
+// }
+    
+// }
+void listFromUser(StrList* ans, int number) {
+    int size = 10; // Initial capacity of the word buffer
+    char* wordBuffer = (char*)malloc(size * sizeof(char));
+    if (!wordBuffer) {
+        perror("Failed to allocate word buffer");
+        exit(EXIT_FAILURE);
+    }
 
+    int wordLength = 0;
+    int wordCount = 0;
+    char c;
+
+    printf("Enter %d words separated by spaces:\n", number);
+
+    // Read characters until the specified number of words have been read
+    while (wordCount < number && (c = getchar()) != EOF) {
+        if (c == ' ' || c == '\n') {
+            if (wordLength > 0) { // A word has been collected
+                wordBuffer[wordLength] = '\0'; // Null-terminate the current word
+                // Insert the word into the list
+                StrList_insertLast(ans, wordBuffer);
+                wordCount++; // Increment the word count
+                wordLength = 0; // Reset the word length for the next word
+
+                if (c == '\n') break; // Stop reading if newline is encountered
+            }
+        } else {
+            // Add the character to the word buffer
+            wordBuffer[wordLength++] = c;
+
+            // Resize the buffer if necessary
+            if (wordLength == size) {
+                size *= 2; // Double the buffer size
+                char* temp = (char*)realloc(wordBuffer, size * sizeof(char));
+                if (!temp) {
+                    perror("Failed to resize word buffer");
+                    free(wordBuffer);
+                    exit(EXIT_FAILURE);
+                }
+                wordBuffer = temp;
+            }
+        }
+    }
+
+    // Free the word buffer
+    free(wordBuffer);
+}
 size_t StrList_size(const StrList* StrList){
     if(StrList==NULL){
         return 0;
@@ -75,14 +122,28 @@ size_t StrList_size(const StrList* StrList){
     else return StrList->_size;
 }
 
-void StrList_insertLast(StrList* sourceList, const char* data){
- Node* new= Node_alloc(data,NULL);
-Node* p1= sourceList->_head;
-while (p1->_next != NULL)
-{
-    p1= p1->_next;
-}
-p1->_next= new;
+void StrList_insertLast(StrList* sourceList, const char* data) {
+    Node* newNode = Node_alloc(data, NULL);  // Allocate the new node
+    if (newNode == NULL) {
+        // Handle memory allocation failure if needed
+        return;
+    }
+
+    // If the list is empty, make the new node the head of the list
+    if (sourceList->_head == NULL) {
+        sourceList->_head = newNode;
+    } else {
+        // Otherwise, find the last node
+        Node* curr = sourceList->_head;
+        while (curr->_next != NULL) {
+            curr = curr->_next;
+        }
+        // Make the last node's _next point to the new node
+        curr->_next = newNode;
+    }
+
+    // Increment the size of the list (if you're maintaining a size variable)
+    sourceList->_size++;
 }
 void StrList_insertAt(StrList* sourceList,const char* data,int index){
 Node* new= Node_alloc(data,NULL);
@@ -103,9 +164,9 @@ void StrList_print(const StrList* StrList){
     if (!StrList){
        return;
     }
-    const Node* p1=StrList->_head;
+     Node* p1=StrList->_head;
     while (p1){
-       printf("%s\n", p1->data);
+       printf("%s ", p1->data);
        p1=p1->_next;
     }
 }
@@ -113,7 +174,7 @@ void StrList_printAt(const StrList* Strlist,int index){
      if (!Strlist){
        return;
     }
-    const Node* p1=Strlist->_head;
+    Node* p1=Strlist->_head;
     while (index>0)
     {
         p1=p1->_next;
@@ -124,7 +185,7 @@ void StrList_printAt(const StrList* Strlist,int index){
 
 int StrList_printLen(const StrList* Strlist){
     int ans=0;
-    const Node* p1=Strlist->_head;
+    Node* p1=Strlist->_head;
     while (p1){
     ans=ans+strlen(p1->data); 
     p1=p1->_next;
@@ -134,7 +195,7 @@ int StrList_printLen(const StrList* Strlist){
 
 int StrList_count(StrList* StrList, const char* data){
 int ans=0;
-const Node* p1=StrList->_head;
+ Node* p1=StrList->_head;
 while (p1){
     if (strcmp(data,p1->data)==0){
        ans++;
@@ -206,23 +267,26 @@ void StrList_removeAt(StrList* list, int index) {
 }
 
 int StrList_isEqual(const StrList* StrList1, const StrList* StrList2){
-    if(StrList1->_size!=StrList2->_size){
-        return 0;
+    if (StrList1->_size != StrList2->_size) {
+        return 0; // Lists are not equal if their sizes differ
     }
-    const Node* p1=StrList1->_head;
-    const Node* p2=StrList2->_head;
-    while (p1){
-       if (!strcmp(p1->data,p2->data)){
-        return 0;
-       }
-       p1=p1->_next;
-       p2=p2->_next;
+
+    Node* p1 = StrList1->_head;
+    Node* p2 = StrList2->_head;
+
+    while (p1 && p2) { // Check both pointers to be extra safe
+        if (strcmp(p1->data, p2->data) != 0) {
+            return 0; // Return 0 if there's a mismatch in data
+        }
+        p1 = p1->_next;
+        p2 = p2->_next;
     }
-    return 1;
+
+    return 1; // Lists are equal if all their elements match
 }
 StrList* StrList_clone(const StrList* sourceList) {
 	StrList* ans= StrList_alloc();
-	const Node* old= sourceList->_head;
+	 Node* old= sourceList->_head;
 	Node** copy= &(ans->_head);
 	ans->_size= sourceList->_size;
 	while(old) {
@@ -237,14 +301,16 @@ void StrList_reverse(StrList* sourceList) {
     if (sourceList == NULL || sourceList->_head == NULL) {
         return;
     }
-    Node* temp = sourceList->_head;
-    Node* new_head = NULL;
-    while (temp != NULL) {
-        Node* new_node = Node_alloc(temp->data, new_head);
-        new_head = new_node;
-        temp = temp->_next;
+    Node* prev = NULL;
+    Node* current = sourceList->_head;
+    Node* next = NULL;
+    while (current != NULL) {
+        next = current->_next;
+        current->_next = prev;
+        prev = current;
+        current = next;
     }
-    sourceList->_head = new_head; // Update the head of the source list
+    sourceList->_head = prev;  // Update the head of the list
 }
     
 void StrList_sort(StrList* list) {
@@ -276,3 +342,7 @@ int StrList_isSorted(StrList* sorceStrList){
     
 	
     
+
+
+
+
