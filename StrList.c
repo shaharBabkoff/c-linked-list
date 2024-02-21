@@ -72,6 +72,30 @@ void StrList_insertLast(StrList* sourceList, const char* data) {
     // Increment the size of the list (if you're maintaining a size variable)
     sourceList->_size++;
 }
+// void StrList_insertAt(StrList* sourceList,const char* data,int index){
+// Node* newNo= Node_alloc(data,NULL);
+
+// if(index==0){
+//     new->_next=sourceList->_head;
+//     sourceList->_head=new;
+//     return;
+// }
+// Node* p1= sourceList->_head;
+// for (size_t i = 1; i < index && p1 != NULL; i++)
+// {
+//    p1=p1->_next;
+// }
+// if (p1==NULL)
+// {
+//     perror("Index out of bounds");
+//     free(new);
+//     return;
+// }
+
+// new->_next=p1->_next;
+// p1->_next=new;
+// //sourceList->_head=p1;
+// }
 void StrList_insertAt(StrList* sourceList, const char* data, int index) {
     Node* newNode = Node_alloc(data, NULL);
     if (index == 0) {
@@ -99,32 +123,49 @@ char* StrList_firstData(const StrList* StrList){
     return StrList->_head->data;
 }
 
+// void StrList_print(const StrList* StrList){
+//     if (!StrList){
+//         printf("\n");
+//        return;
+//     }
+//      Node* p1=StrList->_head;
+//     while (p1){
+//        printf("%s ", p1->data);
+//        p1=p1->_next;
+//     //    if (!p1){
+//     //     printf(" ");
+//     //    }
+//     }
+//      printf("\n");
+// }
 void StrList_print(const StrList* StrList){
-    if (!StrList){
+    if (!StrList || !StrList->_head){
         printf("\n");
-       return;
+        return;
     }
-     Node* p1=StrList->_head;
+    Node* p1 = StrList->_head;
     while (p1){
-       printf("%s ", p1->data);
-       p1=p1->_next;
-    //    if (!p1){
-    //     printf(" ");
-    //    }
+        printf("%s", p1->data);
+        if (p1->_next != NULL) {
+            printf(" ");  // Only print space if not the last node
+        }
+        p1 = p1->_next;
     }
-     printf("\n");
+    printf("\n");  // Print newline at the end
 }
-void StrList_printAt(const StrList* Strlist,int index){
-     if (!Strlist){
-       return;
+
+void StrList_printAt(const StrList* Strlist, int index){
+    if (!Strlist){
+        return;
     }
-    Node* p1=Strlist->_head;
-    while (index>0)
-    {
-        p1=p1->_next;
+    Node* p1 = Strlist->_head;
+    while (index > 0 && p1 != NULL){
+        p1 = p1->_next;
         index--;
     }
-    printf("%s",p1->data);
+    if (p1 != NULL) {
+        printf("%s\n", p1->data);  // Newline after printing the data
+    }
 }
 
 int StrList_printLen(const StrList* Strlist){
