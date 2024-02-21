@@ -37,7 +37,7 @@ char* getStringFromUser() {
         temp = getchar();  // Read the next character
     }
 
-    str[len] = '\0';  // Null-terminate the string
+     str[len] = '\0';  // Null-terminate the string
     return str;
 }
 int main() {
@@ -102,18 +102,12 @@ int main() {
                 printf("%d\n", StrList_printLen(list));
                 break;
             case 7: {
-                char data[20];
-                //printf("Enter the string to count: ");
-                scanf("%19s", data);
-                getchar(); // Consume the newline character
+                char* data= getStringFromUser();
                 printf("%d\n", StrList_count(list, data));
                 break;
             }
             case 8: {
-                char data[20];
-               // printf("Enter the string to remove: ");
-                scanf("%19s", data);
-                getchar(); // Consume the newline character
+                char* data= getStringFromUser();
                 StrList_remove(list, data);
                 break;
             }
@@ -137,9 +131,9 @@ int main() {
                 break;
             case 13:
                 if (StrList_isSorted(list)==1) {
-                    printf("true");
+                    printf("true\n");
                 } else {
-                    printf("false");
+                    printf("false\n");
                 }
                 break;
             default:
