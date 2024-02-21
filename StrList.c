@@ -1,7 +1,6 @@
 #include "StrList.h"
 #include <stdio.h>
 #include <string.h>
-#define Max 50
 
 typedef struct _node{
     char *data;
@@ -13,7 +12,7 @@ typedef struct  _StrList {
     size_t _size;
 }StrList;
 
-Node* Node_alloc(const char *data,Node* next) {
+Node* Node_alloc(const char* data,Node* next) {
     Node* p= (Node*)malloc(sizeof(Node));
     if(p==NULL){
         return NULL;
@@ -45,76 +44,7 @@ if (StrList==NULL) return;
 	}
 	free(StrList);
 } 
-// void listFromUser(StrList* ans, int number){
-//     int size=10;
-//     char c;
-//     int len=0;
-//     char *data;
-//     while (c!= '\n')
-//     {
-//         while (c!="")
-//         {
-//         c= getchar();
-//         data=+c;
-//         len++;
-//         }
-//         if (len==size){
-//             size*=2;
-//         realloc(ans,size);
-//         }
-//         Node* new= Node_alloc(data,NULL);
-//         StrList_insertLast(ans,data);
-    
-// }
-    
-// }
-void listFromUser(StrList* ans, int number) {
-    int size = 10; // Initial capacity of the word buffer
-    char* wordBuffer = (char*)malloc(size * sizeof(char));
-    if (!wordBuffer) {
-        perror("Failed to allocate word buffer");
-        exit(EXIT_FAILURE);
-    }
 
-    int wordLength = 0;
-    int wordCount = 0;
-    char c;
-
-    printf("Enter %d words separated by spaces:\n", number);
-
-    // Read characters until the specified number of words have been read
-    while (wordCount < number && (c = getchar()) != EOF) {
-        if (c == ' ' || c == '\n') {
-            if (wordLength > 0) { // A word has been collected
-                wordBuffer[wordLength] = '\0'; // Null-terminate the current word
-                // Insert the word into the list
-                StrList_insertLast(ans, wordBuffer);
-                wordCount++; // Increment the word count
-                wordLength = 0; // Reset the word length for the next word
-
-                if (c == '\n') break; // Stop reading if newline is encountered
-            }
-        } else {
-            // Add the character to the word buffer
-            wordBuffer[wordLength++] = c;
-
-            // Resize the buffer if necessary
-            if (wordLength == size) {
-                size *= 2; // Double the buffer size
-                char* temp = (char*)realloc(wordBuffer, size * sizeof(char));
-                if (!temp) {
-                    perror("Failed to resize word buffer");
-                    free(wordBuffer);
-                    exit(EXIT_FAILURE);
-                }
-                wordBuffer = temp;
-            }
-        }
-    }
-
-    // Free the word buffer
-    free(wordBuffer);
-}
 size_t StrList_size(const StrList* StrList){
     if(StrList==NULL){
         return 0;
@@ -125,10 +55,8 @@ size_t StrList_size(const StrList* StrList){
 void StrList_insertLast(StrList* sourceList, const char* data) {
     Node* newNode = Node_alloc(data, NULL);  // Allocate the new node
     if (newNode == NULL) {
-        // Handle memory allocation failure if needed
         return;
     }
-
     // If the list is empty, make the new node the head of the list
     if (sourceList->_head == NULL) {
         sourceList->_head = newNode;
@@ -141,19 +69,54 @@ void StrList_insertLast(StrList* sourceList, const char* data) {
         // Make the last node's _next point to the new node
         curr->_next = newNode;
     }
-
     // Increment the size of the list (if you're maintaining a size variable)
     sourceList->_size++;
 }
-void StrList_insertAt(StrList* sourceList,const char* data,int index){
-Node* new= Node_alloc(data,NULL);
-Node* p1= sourceList->_head;
-for (size_t i = 0; i < index; i++)
-{
-   p1=p1->_next;
-}
-new->_next=p1->_next;
-p1->_next=new;
+// void StrList_insertAt(StrList* sourceList,const char* data,int index){
+// Node* newNo= Node_alloc(data,NULL);
+
+// if(index==0){
+//     new->_next=sourceList->_head;
+//     sourceList->_head=new;
+//     return;
+// }
+// Node* p1= sourceList->_head;
+// for (size_t i = 1; i < index && p1 != NULL; i++)
+// {
+//    p1=p1->_next;
+// }
+// if (p1==NULL)
+// {
+//     perror("Index out of bounds");
+//     free(new);
+//     return;
+// }
+
+// new->_next=p1->_next;
+// p1->_next=new;
+// //sourceList->_head=p1;
+// }
+void StrList_insertAt(StrList* sourceList, const char* data, int index) {
+    Node* newNode = Node_alloc(data, NULL);
+    if (index == 0) {
+        newNode->_next = sourceList->_head;
+        sourceList->_head = newNode;
+        return;
+    }
+
+    Node* p1 = sourceList->_head;
+    for (int i = 1; i < index && p1 != NULL; i++) {
+        p1 = p1->_next;
+    }
+
+    if (p1 == NULL) {
+        perror("Index out of bounds");
+        free(newNode); // Free newNode if not inserted
+        return;
+    }
+
+    newNode->_next = p1->_next;
+    p1->_next = newNode;
 }
 
 char* StrList_firstData(const StrList* StrList){
@@ -162,13 +125,18 @@ char* StrList_firstData(const StrList* StrList){
 
 void StrList_print(const StrList* StrList){
     if (!StrList){
+        printf("\n");
        return;
     }
      Node* p1=StrList->_head;
     while (p1){
        printf("%s ", p1->data);
        p1=p1->_next;
+    //    if (!p1){
+    //     printf(" ");
+    //    }
     }
+     printf("\n");
 }
 void StrList_printAt(const StrList* Strlist,int index){
      if (!Strlist){
@@ -270,7 +238,6 @@ int StrList_isEqual(const StrList* StrList1, const StrList* StrList2){
     if (StrList1->_size != StrList2->_size) {
         return 0; // Lists are not equal if their sizes differ
     }
-
     Node* p1 = StrList1->_head;
     Node* p2 = StrList2->_head;
 
