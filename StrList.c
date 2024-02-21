@@ -72,30 +72,6 @@ void StrList_insertLast(StrList* sourceList, const char* data) {
     // Increment the size of the list (if you're maintaining a size variable)
     sourceList->_size++;
 }
-// void StrList_insertAt(StrList* sourceList,const char* data,int index){
-// Node* newNo= Node_alloc(data,NULL);
-
-// if(index==0){
-//     new->_next=sourceList->_head;
-//     sourceList->_head=new;
-//     return;
-// }
-// Node* p1= sourceList->_head;
-// for (size_t i = 1; i < index && p1 != NULL; i++)
-// {
-//    p1=p1->_next;
-// }
-// if (p1==NULL)
-// {
-//     perror("Index out of bounds");
-//     free(new);
-//     return;
-// }
-
-// new->_next=p1->_next;
-// p1->_next=new;
-// //sourceList->_head=p1;
-// }
 void StrList_insertAt(StrList* sourceList, const char* data, int index) {
     Node* newNode = Node_alloc(data, NULL);
     if (index == 0) {
