@@ -50,16 +50,27 @@ int main() {
 
     int choice;
     do {
-        //printf("\nEnter your choice (0 to exit): ");
-        scanf("%d", &choice);
-        getchar(); // Consume the newline character
+      // Example modification for the first scanf call
+
+if (scanf("%d", &choice) != 1) {
+    fprintf(stderr, "Error reading choice.\n");
+    // Clear the input buffer to remove any leftover input
+    while ((choice = getchar()) != '\n' && choice != EOF) { }
+    // Optionally, prompt the user to try again or handle the error in another way
+    continue; // For example, you might want to skip to the next iteration of the loop
+}
+
+
 
         switch (choice) {
             case 1: {
                 int number;
                 //printf("Enter the number of words: ");
-                scanf("%d", &number);
-                getchar();
+                if (scanf("%d", &number) != 1) {
+    fprintf(stderr, "Error reading the number of words.\n");
+    while ((number = getchar()) != '\n' && number != EOF) { } // Clear the input buffer
+    continue; // Skip to the next iteration or handle the error differently
+}
                 for (size_t i = 0; i < number; i++)
                 {
                     char* data= getStringFromUser();
@@ -73,8 +84,11 @@ int main() {
             case 2: {
                 int index;
                // printf("Enter the string and index: ");
-                scanf("%d", &index);
-                getchar(); // Consume the newline character
+                if (scanf("%d", &index) != 1) {
+    fprintf(stderr, "Error reading the index.\n");
+    while ((index = getchar()) != '\n' && index != EOF) { } // Clear the input buffer
+    continue; // Skip to the next iteration or handle the error differently
+}
                 char* data= getStringFromUser();
                 if (data!= NULL&& data[0]!='\n')
                 {
@@ -93,8 +107,11 @@ int main() {
             case 5: {
                 int index;
                 //printf("Enter the index: ");
-                scanf("%d", &index);
-                getchar(); // Consume the newline character
+                if (scanf("%d", &index) != 1) {
+    fprintf(stderr, "Error reading the index.\n");
+    while ((index = getchar()) != '\n' && index != EOF) { } // Clear the input buffer
+    continue; // Skip to the next iteration or handle the error differently
+}
                 StrList_printAt(list, index);
                 break;
             }
@@ -104,18 +121,23 @@ int main() {
             case 7: {
                 char* data= getStringFromUser();
                 printf("%d\n", StrList_count(list, data));
+                free(data);
                 break;
             }
             case 8: {
                 char* data= getStringFromUser();
                 StrList_remove(list, data);
+                free(data);
                 break;
             }
             case 9: {
                 int index;
                 //printf("Enter the index to remove: ");
-                scanf("%d", &index);
-                getchar(); // Consume the newline character
+                if (scanf("%d", &index) != 1) {
+    fprintf(stderr, "Error reading the index.\n");
+    while ((index = getchar()) != '\n' && index != EOF) { } // Clear the input buffer
+    continue; // Skip to the next iteration or handle the error differently
+}
                 StrList_removeAt(list, index);
                 break;
             }
@@ -150,5 +172,4 @@ int main() {
 
     return 0;
 }
-
 
