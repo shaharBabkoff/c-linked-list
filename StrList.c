@@ -216,6 +216,12 @@ void StrList_removeAt(StrList* list, int index) {
 }
 
 int StrList_isEqual(const StrList* StrList1, const StrList* StrList2){
+    if (StrList1==NULL && StrList2==NULL)
+    {
+        return 1;
+    }
+    
+
     if (StrList1->_size != StrList2->_size) {
         return 0; // Lists are not equal if their sizes differ
     }
@@ -279,15 +285,7 @@ void StrList_sort(StrList* list) {
     }
     list->_head = sorted;
 }
-// int StrList_isSorted(StrList* sorceStrList){
-//     StrList* copy= StrList_clone(sorceStrList);
-//     StrList_sort(copy);
-//     if (StrList_isEqual(copy,sorceStrList)==1){
-//     return 1;
-//     }
-//     return 0;
 
-// }
 int StrList_isSorted(StrList* sourceStrList){
     StrList* copy = StrList_clone(sourceStrList);
     StrList_sort(copy);
@@ -295,11 +293,3 @@ int StrList_isSorted(StrList* sourceStrList){
     StrList_free(copy);  // Free the cloned list after use
     return isSorted;
 }
-
-    
-	
-    
-
-
-
-
